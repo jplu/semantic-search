@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "triton-inference-server.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "triton-inference-server.name" . }}
+    chart: {{ template "triton-inference-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "triton-inference-server.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "triton-inference-server.name" . }}
+        release: {{ .Release.Name }}
+
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.imageName }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+          env:
+            - name: OMP_NUM_THREADS
+              value: "{{ .Values.image.nproc }}"
+
+          resources:
+            limits:
+              nvidia.com/gpu: {{ .Values.image.numGpus }}
+
+          args: ["tritonserver", "--model-store={{ .Values.image.modelRepositoryPath }}"]
+
+          ports:
+            - containerPort: 8000
+              name: http
+            - containerPort: 8001
+              name: grpc
+            - containerPort: 8002
+              name: metrics
+          livenessProbe:
+            httpGet:
+              path: /v2/health/live
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            httpGet:
+              path: /v2/health/ready
+              port: http
+
+      serviceAccountName: iden-k8s-gcs-access
+
+      nodeSelector:
+        cloud.google.com/gke-nodepool: pool-tritonserver
+
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000

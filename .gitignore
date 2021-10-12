@@ -1,3 +1,11 @@
+# Folder
+onnx
+deploy/*/.terraform
+deploy/*/.terraform.lock.hcl
+deploy/*/terraform.tfstate*
+deploy/*/**-creds.json
+deploy/deploy.sh
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

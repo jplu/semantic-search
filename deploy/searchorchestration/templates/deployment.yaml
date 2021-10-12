@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "search-orchestration.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "search-orchestration.name" . }}
+    chart: {{ template "search-orchestration.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "search-orchestration.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "search-orchestration.name" . }}
+        release: {{ .Release.Name }}
+
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.imageName }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          tty: false
+
+          env:
+            - name: ES_HOST
+              value: es-cluster-es-http
+            - name: ES_LOGIN
+              valueFrom:
+                secretKeyRef:
+                  name: credssearchorchestration
+                  key: login
+            - name: ES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: credssearchorchestration
+                  key: password
+            - name: ES_PORT
+              value: "{{ .Values.image.esport }}"
+            - name: ES_IS_SECURE
+              value: "{{ .Values.image.esissecure }}"
+            - name: DEVISE_JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: credssearchorchestration
+                  key: secret
+            - name: FAISS_GRPC_HOST
+              value: faissserver-faiss-grpc-server
+            - name: TRITON_GRPC_HOST
+              value: tritonserver-triton-inference-server
+
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 9000
+              name: metrics
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+
+      nodeSelector:
+        cloud.google.com/gke-nodepool: pool-orchestration
+
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000

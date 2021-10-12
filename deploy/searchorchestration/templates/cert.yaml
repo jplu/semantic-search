@@ -1,0 +1,7 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: beamapp-cert
+spec:
+  domains:
+    - expendon.beamapp.co
