@@ -4,8 +4,8 @@ image:
   imageName: nvcr.io/nvidia/tritonserver:21.09-py3
   pullPolicy: IfNotPresent
   modelRepositoryPath: gs://triton-inference-server/prod/model_repository
-  numGpus: 1
-  nproc: 7
+  numGpus: 0
+  nproc: 16
 
 service:
   type: NodePort

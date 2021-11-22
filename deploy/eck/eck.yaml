@@ -76,28 +76,28 @@ spec:
           securityContext:
             privileged: true
           command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
-        - name: install-plugins
-          command:
-          - sh
-          - -c
-          - |
-            bin/elasticsearch-plugin install --batch repository-gcs
-        - name: add-gcs-key
-          command:
-          - sh
-          - -c
-          - |
-            echo y | bin/elasticsearch-keystore add-file gcs.client.default.credentials_file ./key/eck-creds.json
-          volumeMounts:
-          - name: gcs-credentials
-            mountPath: "/usr/share/elasticsearch/key"
-            readOnly: true
+        #- name: install-plugins
+        #  command:
+        #  - sh
+        #  - -c
+        #  - |
+        #    bin/elasticsearch-plugin install --batch repository-gcs
+        #- name: add-gcs-key
+        #  command:
+        #  - sh
+        #  - -c
+        #  - |
+        #    echo y | bin/elasticsearch-keystore add-file gcs.client.default.credentials_file ./key/eck-creds.json
+        #  volumeMounts:
+        #  - name: eck-gcs-credentials
+        #    mountPath: "/usr/share/elasticsearch/key"
+        #    readOnly: true
         - name: chown-data-volumes
           command: ["sh", "-c", "chown elasticsearch:elasticsearch /usr/share/elasticsearch/data"]
-        volumes:
-        - name: gcs-credentials
-          secret:
-            secretName: gcs-credentials
+        #volumes:
+        #- name: eck-gcs-credentials
+        #  secret:
+        #    secretName: eck-gcs-credentials
   - name: data-node
     count: 1
     config:
@@ -123,28 +123,28 @@ spec:
           securityContext:
             privileged: true
           command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
-        - name: install-plugins
-          command:
-          - sh
-          - -c
-          - |
-            bin/elasticsearch-plugin install --batch repository-gcs
-        - name: add-gcs-key
-          command:
-          - sh
-          - -c
-          - |
-            echo y | bin/elasticsearch-keystore add-file gcs.client.default.credentials_file ./key/eck-creds.json
-          volumeMounts:
-          - name: gcs-credentials
-            mountPath: "/usr/share/elasticsearch/key"
-            readOnly: true
+        #- name: install-plugins
+        #  command:
+        #  - sh
+        #  - -c
+        #  - |
+        #    bin/elasticsearch-plugin install --batch repository-gcs
+        #- name: add-gcs-key
+        #  command:
+        #  - sh
+        #  - -c
+        #  - |
+        #    echo y | bin/elasticsearch-keystore add-file gcs.client.default.credentials_file ./key/eck-creds.json
+        #  volumeMounts:
+        #  - name: eck-gcs-credentials
+        #    mountPath: "/usr/share/elasticsearch/key"
+        #    readOnly: true
         - name: chown-data-volumes
           command: ["sh", "-c", "chown elasticsearch:elasticsearch /usr/share/elasticsearch/data"]
-        volumes:
-        - name: gcs-credentials
-          secret:
-            secretName: gcs-credentials
+        #volumes:
+        #- name: eck-gcs-credentials
+        #  secret:
+        #    secretName: eck-gcs-credentials
 ---
 apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana

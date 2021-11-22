@@ -50,23 +50,21 @@ module "gke" {
   node_pools = [
     {
       name               = "pool-tritonserver"
-      machine_type       = "n1-highcpu-8"
-      //machine_type       = "n1-standard-4"
+      machine_type       = "n2-custom-16-8192"
+      min_cpu_platform   = "Intel Ice Lake"
       node_locations     = var.zones[0]
       max_count          = 3
       min_count          = 1
       initial_node_count = 1
       disk_type          = "pd-ssd"
       disk_size_gb       = 50
-      accelerator_count  = 1
-      accelerator_type   = "nvidia-tesla-t4"
       service_account    = var.compute_engine_service_account
     },
     {
       name               = "pool-faissserver"
-      machine_type       = "custom-32-102400"
-      //machine_type       = "n1-standard-4"
+      machine_type       = "n2-custom-32-61440"
       node_locations     = var.zones[0]
+      min_cpu_platform   = "Intel Ice Lake"
       max_count          = 3
       min_count          = 1
       initial_node_count = 1
@@ -77,7 +75,6 @@ module "gke" {
     {
       name               = "pool-orchestration"
       machine_type       = "n1-highcpu-4"
-      //machine_type       = "n1-standard-1"
       node_locations     = var.zones[0]
       max_count          = 3
       min_count          = 1

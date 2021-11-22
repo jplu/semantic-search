@@ -1,8 +1,12 @@
 # Folder
-onnx
-deploy/*/.terraform
-deploy/*/.terraform.lock.hcl
-deploy/*/terraform.tfstate*
+*.json
+data/*
+deploy/.terraform
+#deploy/.terraform.lock.hcl
+#deploy/terraform.tfstate*
+*.hcl
+*.tfstate
+*.backup
 deploy/*/**-creds.json
 deploy/deploy.sh
 

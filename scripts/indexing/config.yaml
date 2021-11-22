@@ -1,0 +1,56 @@
+cluster_name: encoding
+
+upscaling_speed: 0.0
+
+provider:
+    type: gcp
+    region: europe-west4
+    availability_zone: europe-west4-c
+    project_id: expend-on-feature
+
+auth:
+    ssh_user: ubuntu
+
+available_node_types:
+    head:
+        resources: { }
+        node_config:
+            machineType: n2-standard-2
+            minCpuPlatform: Intel Ice Lake
+            disks:
+                - boot: true
+                  autoDelete: true
+                  type: PERSISTENT
+                  initializeParams:
+                    diskSizeGb: 50
+                    diskType: projects/expend-on-feature/zones/europe-west4-c/diskTypes/pd-ssd
+                    sourceImage: projects/deeplearning-platform-release/global/images/family/common-cpu
+            scheduling:
+                - preemptible: true
+
+    worker:
+        max_workers: 2
+        min_workers: 2
+        resources: { }
+        node_config:
+            machineType: n2-standard-2
+            minCpuPlatform: Intel Ice Lake
+            disks:
+                - boot: true
+                  autoDelete: true
+                  type: PERSISTENT
+                  initializeParams:
+                    diskSizeGb: 50
+                    diskType: projects/expend-on-feature/zones/europe-west4-c/diskTypes/pd-ssd
+                    sourceImage: projects/deeplearning-platform-release/global/images/family/common-cpu
+            scheduling:
+                - preemptible: true
+
+head_node_type: head
+
+file_mounts: {
+    "resources": "test_resources",
+}
+
+setup_commands:
+    - pip install -U "ray[default] @ https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp37-cp37m-manylinux2014_x86_64.whl" "ray[serve] @ https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp37-cp37m-manylinux2014_x86_64.whl" transformers onnxruntime pyarrow psutil torch

@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   imageName: jplu/search-orchestration:1.0.0
-  pullPolicy: IfNotPresent
+  pullPolicy: Always #IfNotPresent
   esport: 9200
   esissecure: false
 

@@ -12,7 +12,7 @@ metadata:
 spec:
   storageClassName: sc-faiss
   capacity:
-    storage: 100Gi
+    storage: 50Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -33,7 +33,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Gi
+      storage: 50Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -63,7 +63,7 @@ spec:
           image: "{{ .Values.image.imageName }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
 
-          command: ["./faiss_server", "-file_path=/data/en_wikipedia.faiss", "-nprobe=6000", "-on_cpu", "-port=8081"]
+          command: ["./faiss_server", "-file_path=/data/en_wikipedia.faiss", "-nprobe=21804", "-on_cpu", "-port=8081"]
 
           volumeMounts:
             - name: data
@@ -82,11 +82,11 @@ spec:
           readinessProbe:
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:8081"]
-            initialDelaySeconds: 1800
+            initialDelaySeconds: 1500
           livenessProbe:
             exec:
               command: ["/bin/grpc_health_probe", "-addr=:8081"]
-            initialDelaySeconds: 1800
+            initialDelaySeconds: 1500
 
       initContainers:
         - name: download
