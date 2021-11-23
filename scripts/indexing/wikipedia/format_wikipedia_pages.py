@@ -1,7 +1,7 @@
 import argparse
+import datetime
 import json
 import logging
-import os
 import pathlib
 import time
 import timeit
@@ -10,8 +10,6 @@ import uuid
 from asyncio import Event
 from typing import Dict, Tuple, List
 
-import pandas as pd
-import pyarrow
 import ray
 
 from psutil import cpu_count
@@ -72,6 +70,9 @@ class ProgressBar:
 
 
 def create_pipeline(data_dir: pathlib.Path, num_shards: int) -> List[ray.data.dataset.Dataset]:
+    if not any(data_dir.iterdir()):
+        raise ValueError(f"Folder {data_dir.as_posix()} is empty.")
+    
     json_files = list(pathlib.Path(data_dir.as_posix()).rglob(f"*.json"))
 
     return ray.data.from_items(json_files).split(num_shards)
@@ -195,6 +196,9 @@ def main() -> None:
     parser = init_argparse()
     args = parser.parse_args()
 
+    if not args.remote and not args.local:
+        raise ValueError("One of the arguments --local or --remote is mandatory.")
+
     if args.local:
         ray.init()
 
@@ -223,11 +227,11 @@ def main() -> None:
 
     pb = ProgressBar(total)
     actor = pb.actor
+    start_time = timeit.default_timer()
     tasks = [worker.run_parse.remote(actor) for worker in workers]
 
     pb.print_until_done()
 
-    start_time = timeit.default_timer()
     total_unreadable_pages = 0
 
     while len(tasks):
@@ -240,8 +244,12 @@ def main() -> None:
             with open(filepath, "w", encoding="utf-8") as file:
                 json.dump(page, file, indent=4)
                 file.flush()
-    
-    logger.info(f"Time taken: {timeit.default_timer() - start_time} sec")
+
+    duration = datetime.timedelta(seconds=timeit.default_timer() - start_time)
+    duration_seconds = datetime.timedelta(seconds=duration.seconds)
+    hours, minutes, seconds = str(duration_seconds).split(":")
+
+    logger.info(f"Time taken: {duration.days} days {hours} hours {minutes} minutes {seconds} seconds {duration.microseconds} microseconds sec")
     logger.info(f"The formatted Wikipedia pages are in {final_output}")
     logger.info(f"{total_unreadable_pages} pages couldn't be read.")
 

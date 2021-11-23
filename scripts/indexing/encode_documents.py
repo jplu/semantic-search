@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import logging
 import os
 import pathlib
@@ -84,6 +85,9 @@ def preprocess(documents: pyarrow.Table) -> pd.DataFrame:
 
 
 def create_pipeline(data_dir: pathlib.Path, num_shards: int) -> List[ray.data.dataset.Dataset]:
+    if not any(data_dir.iterdir()):
+        raise ValueError(f"Folder {data_dir.as_posix()} is empty.")
+
     return ray.data.read_json(data_dir.as_posix()) \
         .map_batches(preprocess) \
         .split(num_shards)
@@ -210,18 +214,21 @@ def main() -> None:
 
     pb = ProgressBar(total)
     actor = pb.actor
+    start_time = timeit.default_timer()
     tasks = [worker.infer.remote(actor) for worker in workers]
 
     pb.print_until_done()
-
-    start_time = timeit.default_timer()
 
     while len(tasks):
         done_task, tasks = ray.wait(tasks)
         encoding_results = ray.get(done_task[0])
         encoding_results.to_parquet((final_output / str(uuid.uuid1())).as_posix() + ".parquet")
     
-    logger.info(f"Time taken: {timeit.default_timer() - start_time} sec")
+    duration = datetime.timedelta(seconds=timeit.default_timer() - start_time)
+    duration_seconds = datetime.timedelta(seconds=duration.seconds)
+    hours, minutes, seconds = str(duration_seconds).split(":")
+
+    logger.info(f"Time taken: {duration.days} days {hours} hours {minutes} minutes {seconds} seconds {duration.microseconds} microseconds sec")
     logger.info(f"The Parquet files are in {final_output}")
 
 

@@ -1,12 +1,14 @@
 import argparse
-import faiss
+import datetime
 import logging
 import math
-import numpy as np
-import pandas as pd
 import pathlib
 import timeit
 import uuid
+
+import faiss
+import numpy as np
+import pandas as pd
 
 
 logger = logging.getLogger(__name__)
@@ -70,7 +72,11 @@ def main() -> None:
 
     convert_to_faiss(args.input, final_output)
 
-    logger.info(f"Time taken: {timeit.default_timer() - start_time} sec")
+    duration = datetime.timedelta(seconds=timeit.default_timer() - start_time)
+    duration_seconds = datetime.timedelta(seconds=duration.seconds)
+    hours, minutes, seconds = str(duration_seconds).split(":")
+
+    logger.info(f"Time taken: {duration.days} days {hours} hours {minutes} minutes {seconds} seconds {duration.microseconds} microseconds sec")
     logger.info(f"The FAISS index is in {final_output}")
 
 

@@ -1,0 +1,11 @@
+torch
+nni
+tensorboard
+onnxruntime-gpu
+coloredlogs
+onnx
+sympy
+transformers
+pyarrow
+ray
+elasticsearch

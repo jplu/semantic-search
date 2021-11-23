@@ -1,26 +1,22 @@
 import argparse
-import os
-import json
-import timeit
-import distutils.util
-import urllib3
+import datetime
 import logging
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-import multiprocessing as mp
-from psutil import cpu_count
+import os
 import pathlib
-import ray
-import pyarrow
+import time
+import timeit
+
 from asyncio import Event
 from typing import Dict, List, Tuple
-import pandas as pd
-import time
 
-from tqdm import tqdm
+import pandas as pd
+import pyarrow
+import ray
+
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk
+from psutil import cpu_count
+from tqdm import tqdm
 
 
 logger = logging.getLogger(__name__)
@@ -334,12 +330,11 @@ def main() -> None:
     
     pb = ProgressBar(total)
     actor = pb.actor
+    start_time = timeit.default_timer()
     tasks = [worker.load.remote(actor) for worker in workers]
     good, missing, errors = 0, 0, 0
 
     pb.print_until_done()
-
-    start_time = timeit.default_timer()
 
     while len(tasks):
         done_task, tasks = ray.wait(tasks)
@@ -348,7 +343,11 @@ def main() -> None:
         missing += current_missing
         errors += current_errors
     
-    logger.info(f"Time taken: {timeit.default_timer() - start_time} sec")
+    duration = datetime.timedelta(seconds=timeit.default_timer() - start_time)
+    duration_seconds = datetime.timedelta(seconds=duration.seconds)
+    hours, minutes, seconds = str(duration_seconds).split(":")
+
+    logger.info(f"Time taken: {duration.days} days {hours} hours {minutes} minutes {seconds} seconds {duration.microseconds} microseconds sec")
     logger.info(f"Completed import with {good} success, {missing} missing and {errors} errors")
 
 

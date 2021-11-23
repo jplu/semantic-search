@@ -8,6 +8,11 @@ The creation of an index is divided in 5 sub-tasks:
 * Encode these formatted dataset into vectors.
 * Index these vectors with FAISS.
 
+Before to start be sure to have all the required python packages installed with:
+```
+pip install -r requirements.txt
+```
+
 ## Create the ONNX model
 
 In order to create the quantized and optimized ONNX version of a Tensorflow or Pytorch model you can use the `create_onnx_model.py` script. For example with an encoder model:
