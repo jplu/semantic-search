@@ -2,6 +2,8 @@
 *.json
 data/*
 deploy/.terraform
+dev.tfvars
+prod.tfvars
 #deploy/.terraform.lock.hcl
 #deploy/terraform.tfstate*
 *.hcl

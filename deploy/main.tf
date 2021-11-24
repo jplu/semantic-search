@@ -9,24 +9,24 @@ provider "kubernetes" {
 module "gcp-network" {
   source       = "terraform-google-modules/network/google"
   project_id   = var.project_id
-  network_name = var.network
+  network_name = "${var.network}-${var.prefix}"
 
   subnets = [
     {
-      subnet_name           = var.subnetwork
+      subnet_name           = "${var.subnetwork}-${var.prefix}"
       subnet_ip             = "10.0.0.0/17"
       subnet_region         = var.region
     },
   ]
 
   secondary_ranges = {
-    (var.subnetwork) = [
+    ("${var.subnetwork}-${var.prefix}") = [
       {
-        range_name    = var.ip_range_pods_name
+        range_name    = "${var.ip_range_pods_name}-${var.prefix}"
         ip_cidr_range = "192.168.0.0/18"
       },
       {
-        range_name    = var.ip_range_services_name
+        range_name    = "${var.ip_range_services_name}-${var.prefix}"
         ip_cidr_range = "192.168.64.0/18"
       },
     ]
@@ -36,14 +36,14 @@ module "gcp-network" {
 module "gke" {
   source                            = "terraform-google-modules/kubernetes-engine/google"
   project_id                        = var.project_id
-  name                              = "${var.project_id}-cluster"
+  name                              = "${var.project_id}-${var.prefix}-cluster"
   regional                          = false
   region                            = var.region
   zones                             = var.zones
   network                           = module.gcp-network.network_name
   subnetwork                        = module.gcp-network.subnets_names[0]
-  ip_range_pods                     = var.ip_range_pods_name
-  ip_range_services                 = var.ip_range_services_name
+  ip_range_pods                     = "${var.ip_range_pods_name}-${var.prefix}"
+  ip_range_services                 = "${var.ip_range_services_name}-${var.prefix}"
   create_service_account            = false
   remove_default_node_pool          = true
 
@@ -86,7 +86,6 @@ module "gke" {
     {
       name               = "pool-elasticsearch"
       machine_type       = "n1-highcpu-16"
-      //machine_type       = "n1-standard-4"
       node_locations     = var.zones[0]
       max_count          = 3
       min_count          = 1
@@ -100,9 +99,8 @@ module "gke" {
 
 module "k8s-gcs-access-workload-identity" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  name       = "iden-k8s-gcs-access"
+  name       = "iden-k8s-gcs-access-${var.prefix}"
   namespace  = "default"
-  project_id = "expend-on-feature"
+  project_id = "${var.project_id}"
   roles      = ["roles/storage.admin"]
 }
-

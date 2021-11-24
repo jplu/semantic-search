@@ -1,41 +1,37 @@
 variable "project_id" {
-  default     = "expend-on-feature"
-  description = "The project ID to host the cluster in"
+  description = "The GCP project ID that will host the cluster."
+}
+
+variable "prefix" {
+  description = "This is the environment where your webapp is deployed. qa, prod, or dev."
 }
 
 variable "region" {
-  default     = "europe-west4"
-  description = "The region to host the cluster in"
+  description = "The region that will host the cluster."
 }
 
 variable "zones" {
-  default     = ["europe-west4-c"]
-  description = "The zone to host the cluster in (required if is a zonal cluster)"
+  description = "The zone that will host the cluster (required if you want a zonal cluster). Must be a list."
 }
 
 variable "network" {
-  default     = "vpc-01"
-  description = "The VPC network to host the cluster in"
+  description = "The name of the VPC network that will be used by the cluster."
 }
 
 variable "subnetwork" {
-  default     = "europe-west4-01"
-  description = "The subnetwork to host the cluster in"
+  description = "The name of the subnetwork used by the VPC."
 }
 
 variable "ip_range_pods_name" {
-  default     = "europe-west4-01-gke-01-pods"
-  description = "The secondary ip range to use for pods"
+  description = "The name of the secondary ip range to use for the pods."
 }
 
 variable "ip_range_services_name" {
-  default     = "europe-west4-01-gke-01-services"
-  description = "The secondary ip range to use for services"
+  description = "The name of the secondary ip range to use for the services."
 }
 
 variable "compute_engine_service_account" {
-  default     = "gke-access@expend-on-feature.iam.gserviceaccount.com"
-  description = "Service account to associate to the nodes in the cluster"
+  description = "The name of the service account to associate to each node in the cluster."
 }
 
 variable "cluster_autoscaling" {
