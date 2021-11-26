@@ -54,7 +54,7 @@ spec:
               path: /v2/health/ready
               port: http
 
-      serviceAccountName: iden-k8s-gcs-access
+      serviceAccountName: iden-k8s-gcs-access-{{ .Values.image.prefix }}
 
       nodeSelector:
         cloud.google.com/gke-nodepool: pool-tritonserver

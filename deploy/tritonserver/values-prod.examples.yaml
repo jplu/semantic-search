@@ -1,0 +1,12 @@
+replicaCount: 1
+
+image:
+  imageName: nvcr.io/nvidia/tritonserver:21.11-py3
+  pullPolicy: IfNotPresent
+  modelRepositoryPath: 
+  numGpus: 
+  nproc: 
+  prefix: prod
+
+service:
+  type: NodePort

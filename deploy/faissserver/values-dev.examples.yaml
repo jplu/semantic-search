@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  imageName: jplu/faiss-grpc:1.0.0
+  pullPolicy: IfNotPresent
+  bucketPath: 
+  numGpus: 
+  prefix: dev
+  storage:
+  nprobe: 
+  grpcPort: 
+  indexName: 
+  pdName:
+
+service:
+  type: NodePort

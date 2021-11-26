@@ -1,39 +1,39 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: sc-faiss
+  name: sc-faiss-{{ .Values.image.prefix }}
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-faiss
+  name: pv-faiss-{{ .Values.image.prefix }}
 spec:
-  storageClassName: sc-faiss
+  storageClassName: sc-faiss-{{ .Values.image.prefix }}
   capacity:
-    storage: 50Gi
+    storage: {{ .Values.image.storage }}Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   claimRef:
     namespace: default
-    name: pvc-faiss
+    name: pvc-faiss-{{ .Values.image.prefix }}
   gcePersistentDisk:
-    pdName: k8s-faiss-storage
+    pdName: {{ .Values.image.pdName }}
     fsType: ext4
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pvc-faiss
+  name: pvc-faiss-{{ .Values.image.prefix }}
 spec:
-  storageClassName: sc-faiss
+  storageClassName: sc-faiss-{{ .Values.image.prefix }}
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 50Gi
+      storage: {{ .Values.image.storage }}Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -63,7 +63,12 @@ spec:
           image: "{{ .Values.image.imageName }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
 
-          command: ["./faiss_server", "-file_path=/data/en_wikipedia.faiss", "-nprobe=21804", "-on_cpu", "-port=8081"]
+          {{- if .Values.image.numGpus }}
+          command: ["./faiss_server", "-file_path=/data/{{ .Values.image.indexName }}", "-nprobe={{ .Values.image.nprobe }}", "-port={{ .Values.image.grpcPort }}"]
+          {{- else }}
+          command: ["./faiss_server", "-file_path=/data/{{ .Values.image.indexName }}", "-nprobe={{ .Values.image.nprobe }}", "-on_cpu", "-port={{ .Values.image.grpcPort }}"]
+          {{- end }}
+          
 
           volumeMounts:
             - name: data
@@ -75,17 +80,17 @@ spec:
               nvidia.com/gpu: {{ .Values.image.numGpus }}
           
           ports:
-            - containerPort: 8081
+            - containerPort: {{ .Values.image.grpcPort }}
               name: grpc
             - containerPort: 8000
               name: metrics
           readinessProbe:
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:8081"]
+              command: ["/bin/grpc_health_probe", "-addr=:{{ .Values.image.grpcPort }}"]
             initialDelaySeconds: 1500
           livenessProbe:
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:8081"]
+              command: ["/bin/grpc_health_probe", "-addr=:{{ .Values.image.grpcPort }}"]
             initialDelaySeconds: 1500
 
       initContainers:
@@ -96,7 +101,7 @@ spec:
             - name: data
               mountPath: /data
 
-      serviceAccountName: iden-k8s-gcs-access
+      serviceAccountName: iden-k8s-gcs-access-{{ .Values.image.prefix }}
 
       securityContext:
         runAsUser: 1000
@@ -105,7 +110,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: pvc-faiss
+            claimName: pvc-faiss-{{ .Values.image.prefix }}
 
       nodeSelector:
         cloud.google.com/gke-nodepool: pool-faissserver

@@ -2,9 +2,12 @@ replicaCount: 1
 
 image:
   imageName: jplu/search-orchestration:1.0.0
-  pullPolicy: Always #IfNotPresent
-  esport: 9200
-  esissecure: false
+  pullPolicy: IfNotPresent
+  esPort: 
+  esIsSecure: false
+  certName: 
+  ipName: 
+  domain: 
 
 service:
   type: NodePort

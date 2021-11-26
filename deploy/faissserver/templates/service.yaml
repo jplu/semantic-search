@@ -11,7 +11,7 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: 8081
+    - port: {{ .Values.image.grpcPort }}
       targetPort: grpc
       name: grpc-server
     - port: 8000

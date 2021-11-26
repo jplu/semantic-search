@@ -48,50 +48,52 @@ module "gke" {
   remove_default_node_pool          = true
 
   node_pools = [
-    {
+    /*{
       name               = "pool-tritonserver"
-      machine_type       = "n2-custom-16-8192"
-      min_cpu_platform   = "Intel Ice Lake"
+      machine_type       = var.triton_machine_type
+      min_cpu_platform   = var.triton_min_cpu_platform
       node_locations     = var.zones[0]
       max_count          = 3
       min_count          = 1
       initial_node_count = 1
       disk_type          = "pd-ssd"
-      disk_size_gb       = 50
+      disk_size_gb       = var.triton_disk_size_gb
       service_account    = var.compute_engine_service_account
     },
     {
       name               = "pool-faissserver"
-      machine_type       = "n2-custom-32-61440"
+      machine_type       = var.faiss_machine_type
       node_locations     = var.zones[0]
-      min_cpu_platform   = "Intel Ice Lake"
+      min_cpu_platform   = var.faiss_min_cpu_platform
       max_count          = 3
       min_count          = 1
       initial_node_count = 1
       disk_type          = "pd-ssd"
-      disk_size_gb       = 20
+      disk_size_gb       = var.faiss_disk_size_gb
+      service_account    = var.compute_engine_service_account
+    },*/
+    {
+      name               = "pool-elasticsearch"
+      machine_type       = var.elasticsearch_machine_type
+      node_locations     = var.zones[0]
+      min_cpu_platform   = var.elasticsearch_min_cpu_platform
+      max_count          = 3
+      min_count          = 1
+      initial_node_count = 1
+      disk_type          = "pd-ssd"
+      disk_size_gb       = var.elasticsearch_disk_size_gb
       service_account    = var.compute_engine_service_account
     },
     {
       name               = "pool-orchestration"
-      machine_type       = "n1-highcpu-4"
+      machine_type       = var.orchestration_machine_type
       node_locations     = var.zones[0]
+      min_cpu_platform   = var.orchestration_min_cpu_platform
       max_count          = 3
       min_count          = 1
       initial_node_count = 1
       disk_type          = "pd-ssd"
-      disk_size_gb       = 10
-      service_account    = var.compute_engine_service_account
-    },
-    {
-      name               = "pool-elasticsearch"
-      machine_type       = "n1-highcpu-16"
-      node_locations     = var.zones[0]
-      max_count          = 3
-      min_count          = 1
-      initial_node_count = 1
-      disk_type          = "pd-ssd"
-      disk_size_gb       = 10
+      disk_size_gb       = var.orchestration_disk_size_gb
       service_account    = var.compute_engine_service_account
     }
   ]

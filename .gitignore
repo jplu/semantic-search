@@ -4,13 +4,14 @@ data/*
 deploy/.terraform
 dev.tfvars
 prod.tfvars
-#deploy/.terraform.lock.hcl
-#deploy/terraform.tfstate*
+values-dev.yaml
+values-prod.yaml
 *.hcl
 *.tfstate
 *.backup
 deploy/*/**-creds.json
 deploy/deploy.sh
+deploy/terraform.tfstate.d
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

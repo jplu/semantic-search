@@ -1,0 +1,7 @@
+replicaCount: 1
+
+image:
+  prefix: dev
+  storage: 
+  pdNameMaster: 
+  pdNameData: 

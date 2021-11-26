@@ -34,6 +34,54 @@ variable "compute_engine_service_account" {
   description = "The name of the service account to associate to each node in the cluster."
 }
 
+variable "triton_machine_type" {
+  description = "The GCP machine type for the Triton Server node pool."
+}
+
+variable "triton_min_cpu_platform" {
+  description = "The targeted min CPU platform for the Triton Server node pool."
+}
+
+variable "triton_disk_size_gb" {
+  description = "The disk size for the Triton Server node pool."
+}
+
+variable "faiss_machine_type" {
+  description = "The GCP machine type for the FAISS Server node pool."
+}
+
+variable "faiss_min_cpu_platform" {
+  description = "The targeted min CPU platform for the FAISS Server node pool."
+}
+
+variable "faiss_disk_size_gb" {
+  description = "The disk size for the FAISS Server node pool."
+}
+
+variable "orchestration_machine_type" {
+  description = "The GCP machine type for the Orchestration node pool."
+}
+
+variable "orchestration_min_cpu_platform" {
+  description = "The targeted min CPU platform for the Orchestration node pool."
+}
+
+variable "orchestration_disk_size_gb" {
+  description = "The disk size for the Orchestration node pool."
+}
+
+variable "elasticsearch_machine_type" {
+  description = "The GCP machine type for the Elasticsearch node pool."
+}
+
+variable "elasticsearch_min_cpu_platform" {
+  description = "The targeted min CPU platform for the Elasticsearch node pool."
+}
+
+variable "elasticsearch_disk_size_gb" {
+  description = "The disk size for the Elasticsearch node pool."
+}
+
 variable "cluster_autoscaling" {
   type = object({
     enabled             = bool

@@ -41,9 +41,9 @@ spec:
                   name: credssearchorchestration
                   key: password
             - name: ES_PORT
-              value: "{{ .Values.image.esport }}"
+              value: "{{ .Values.image.esPort }}"
             - name: ES_IS_SECURE
-              value: "{{ .Values.image.esissecure }}"
+              value: "{{ .Values.image.esIsSecure }}"
             - name: DEVISE_JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:

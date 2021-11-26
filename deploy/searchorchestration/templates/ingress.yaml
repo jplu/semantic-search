@@ -3,8 +3,8 @@ kind: Ingress
 metadata:
   name: my-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: expend-on-ip
-    networking.gke.io/managed-certificates: beamapp-cert
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.image.ipName }}
+    networking.gke.io/managed-certificates: {{ .Values.image.certName }}
     kubernetes.io/ingress.class: "gce"
     kubernetes.io/ingress.allow-http: "false"
 spec:
