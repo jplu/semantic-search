@@ -1,12 +1,12 @@
-cluster_name: encoding
+cluster_name: test
 
 upscaling_speed: 0.0
 
 provider:
     type: gcp
-    region: europe-west4
-    availability_zone: europe-west4-c
-    project_id: expend-on-feature
+    region: 
+    availability_zone: 
+    project_id: 
 
 auth:
     ssh_user: ubuntu
@@ -23,7 +23,6 @@ available_node_types:
                   type: PERSISTENT
                   initializeParams:
                     diskSizeGb: 50
-                    diskType: projects/expend-on-feature/zones/europe-west4-c/diskTypes/pd-ssd
                     sourceImage: projects/deeplearning-platform-release/global/images/family/common-cpu
             scheduling:
                 - preemptible: true
@@ -41,16 +40,11 @@ available_node_types:
                   type: PERSISTENT
                   initializeParams:
                     diskSizeGb: 50
-                    diskType: projects/expend-on-feature/zones/europe-west4-c/diskTypes/pd-ssd
                     sourceImage: projects/deeplearning-platform-release/global/images/family/common-cpu
             scheduling:
                 - preemptible: true
 
 head_node_type: head
-
-file_mounts: {
-    "resources": "test_resources",
-}
 
 setup_commands:
     - pip install -U "ray[default] @ https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp37-cp37m-manylinux2014_x86_64.whl" "ray[serve] @ https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp37-cp37m-manylinux2014_x86_64.whl" transformers onnxruntime pyarrow psutil torch
